@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="intro">
+    <div class="intro-item">
+        <img src="./static/hero.jpeg" alt=""/>
+    </div>
+    <div class="intro-item">
+        <div class="intro-text-outer">
+            <div class="intro-text">
+                <h3>水資源拉警報<i class="fa fa-exclamation-triangle faa-flash animated faa-slow"></i>
+                </h3>
+                <h1>臺灣主要水庫水情一覽</h1>
+                <p>2020年臺灣遭逢大旱，各地水庫紛紛探底，部分地區需限水、停灌因應，引起嚴重民生問題。各地旱象緩解了嗎？水庫什麼時候開始回血？一起從水情資料找答案
+                    <i class="fa fa-long-arrow-alt-down faa-flash animated faa-slow"></i>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<section>
+    <div class="paragraph">
+        <div class="paragraph-text">
+            <div class="hl"></div>
+            <h2>暫時解渴！<br/>全臺水情回升</h2>
+            <h3>重點水庫總蓄水率</h3>
+        </div>
+    </div>
+    <div class="graphic">
+        <div id="chart" class="chart"></div>
+    </div>
+    <div class="paragraph">
+        <div class="paragraph-text">
+            <p>
+                從上圖可以看到，臺灣在2021年上半年都遭遇水情告急的窘境，重點水庫的蓄水率一路跌破2成。所幸2021年下半年情勢迴轉，梅雨期與鋒面降雨頗豐，讓重點水庫蓄水率回升至近九成水準。</p>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="paragraph">
+        <div class="paragraph-text">
+            <div class="hl"></div>
+            <h2>無法鬆懈，<br/>仍有水庫水情告急</h2>
+             <p>
+                即便許多水庫水情開始緩解，<span class="highlight">{{ reservoir_low_water_level }}</span>等水庫近日蓄水率徘徊在低點，水情狀況仍不穩定。</p>
+            <h3>蓄水率低迷水庫</h3>
+        </div>
+    </div>
+    <div class="graphic">
+        {% for i in meta %}
+        <div class="col-2">
+            <div class="graphic-text">
+                <h4><i class="fas fa-caret-right"></i>{{ i[0] }}　|　</h4>
+                <p>蓄水率： {{ i[1] }}%（{{ i[2] }}）</p>
+            </div>
+
+            <div id="{{ i[3] }}" class="chart"></div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="sub-nav">
+        <div class="sub-nav-item">
+            <a href="/all_plot"><h3>➡ 看所有水庫</h3></a>
+        </div>
+        <div class="sub-nav-item">
+            <a href="/data"><h3>➡ 看原始資料</h3></a>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    var graph_main = {{ graph_json_main | safe }};
+    var graph_each = {{ graph_json_each | safe }};
+    var meta = {{ meta | safe}};
+    var graphTotal = graph_each.length;
+    Plotly.plot('chart', graph_main, {});
+    for (var i = 0; i < graphTotal; i++) {
+        Plotly.plot(meta[i], JSON.parse(graph_each[i]), {});
+    }
+
+    // for resizing plotly items
+        $(window).resize(function() {
+            Plotly.Plots.resize(document.getElementById("chart"));
+        });
+</script>
+{% endblock %}
